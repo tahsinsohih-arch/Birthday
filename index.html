@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tap Me ❤️</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+  }
+
+  .card {
+    padding: 30px;
+    max-width: 350px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin-top: 20px;
+  }
+
+  .tap {
+    margin-top: 30px;
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+
+  .heart {
+    font-size: 40px;
+    animation: beat 1s infinite;
+  }
+
+  .giftBtn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    color: #ff4e88;
+    cursor: pointer;
+    display: none;
+  }
+
+  .food {
+    position: absolute;
+    font-size: 30px;
+  }
+
+  .gameScreen, .finalScreen {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  @keyframes beat {
+    50% { transform: scale(1.2); }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- MAIN TAP SCREEN -->
+<div class="card" onclick="nextMessage()">
+  <h1 id="title">Tap anywhere ❤️</h1>
+  <p id="text">I have something for you...</p>
+  <div class="heart">💖</div>
+  <div class="tap">(keep tapping)</div>
+
+  <button class="giftBtn" id="giftBtn" onclick="startGame(event)">Open Your Gift 🎁</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="gameScreen" id="gameScreen">
+  <h2>Catch the food khaua 😋</h2>
+  <p>Score: <span id="score">0</span></p>
+</div>
+
+<!-- FINAL SCREEN -->
+<div class="finalScreen" id="finalScreen">
+  <h1>Happy Birthday ARIA 🎂</h1>
+  <p>You are amazing 💖 I hope this made you smile 😊</p>
+</div>
+
+<script>
+  let step = 0;
+
+  const messages = [
+    ["Hey ARIA 😊", "Today is a special day..."],
+    ["Do you know why?", "Because someone amazing was born 💫"],
+    ["And that someone is YOU 💖", "You make everything better"],
+    ["I just want to say...", "You mean a lot to me ❤️"],
+    ["Happy Birthday 🎂", "I hope your day is as beautiful as you 💕"],
+    ["One last thing 😏", "I have a surprise for you 🎁"]
+  ];
+
+  function nextMessage() {
+    if (step < messages.length) {
+      document.getElementById("title").innerText = messages[step][0];
+      document.getElementById("text").innerText = messages[step][1];
+      step++;
+
+      // Show gift button at end
+      if (step === messages.length) {
+        document.getElementById("giftBtn").style.display = "inline-block";
+      }
+    }
+  }
+
+  // 🎮 GAME LOGIC
+  let score = 0;
+  let time = 10;
+
+  const foods = ["🍕","🍔","🍟","🍩","🍗","🍓","🍇","🍉"];
+
+  function startGame(e) {
+    e.stopPropagation();
+
+    document.querySelector(".card").style.display = "none";
+    let game = document.getElementById("gameScreen");
+    game.style.display = "flex";
+
+    let drop = setInterval(createFood, 600);
+
+    let timer = setInterval(() => {
+      time--;
+      if (time <= 0) {
+        clearInterval(drop);
+        clearInterval(timer);
+        endGame();
+      }
+    }, 1000);
+  }
+
+  function createFood() {
+    let food = document.createElement("div");
+    food.innerHTML = foods[Math.floor(Math.random() * foods.length)];
+    food.classList.add("food");
+
+    food.style.left = Math.random() * window.innerWidth + "px";
+    food.style.top = "-20px";
+
+    document.body.appendChild(food);
+
+    let fall = setInterval(() => {
+      food.style.top = (food.offsetTop + 5) + "px";
+
+      if (food.offsetTop > window.innerHeight) {
+        food.remove();
+        clearInterval(fall);
+      }
+    }, 30);
+
+    food.onclick = () => {
+      score++;
+      document.getElementById("score").innerText = score;
+      food.remove();
+      clearInterval(fall);
+    };
+  }
+
+  function endGame() {
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("finalScreen").style.display = "flex";
+  }
+</script>
+
+</body>
+</html>
